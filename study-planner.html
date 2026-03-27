@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Study Planner — TOEFL · IELTS · TOCFL</title>
+<script nonce="X5EiBTQNnfgHkCqi" type="text/javascript" src="//self.adblockultimate.net/manager.js?tm=1774607083&amp;lg=true" guid="{EC65B1C5-7152-4BF3-A90B-2DBFEAEE88BE}" inwhitelist="false" status="true" autohide="true"></script><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;overflow-x:hidden;background:#0d0d0d;}
+.app{min-height:100vh;background:#0d0d0d;color:#f0ece4;font-family:'DM Sans',sans-serif;padding-bottom:80px;}
+.hero{background:linear-gradient(135deg,#0d0d0d,#1a1206 50%,#0d0d0d);border-bottom:1px solid #2a2010;padding:44px 20px 26px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;right:-80px;width:280px;height:280px;background:radial-gradient(circle,rgba(212,163,60,0.13),transparent 70%);pointer-events:none;}
+.hero-label{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#d4a33c;margin-bottom:8px;font-weight:500;}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(22px,6vw,40px);font-weight:900;line-height:1.15;color:#f5f0e8;margin-bottom:6px;}
+.hero-title span{color:#d4a33c;}
+.hero-sub{font-size:12px;color:#8a7d6a;}
+.tabs{display:flex;padding:0 16px;border-bottom:1px solid #1e1a12;background:#0f0e0b;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:0;z-index:100;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:14px 14px;font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#5a5040;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;transition:color .2s,border-color .2s;}
+.tab.active{color:#d4a33c;border-bottom-color:#d4a33c;}
+.content{padding:20px 16px;width:100%;max-width:960px;margin:0 auto;}
+.panel{display:none;}.panel.active{display:block;}
+.section-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#5a5040;margin-bottom:12px;font-weight:500;}
+.info-card{background:#0e0d0a;border:1px solid #1e1a12;border-left:3px solid #d4a33c;border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:#8a7e68;line-height:1.7;}
+.info-card strong{color:#d4a33c;}
+.streak-bar{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.streak-day{width:36px;height:36px;border-radius:8px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;}
+.s-done{background:#2a1e08;color:#d4a33c;border:1px solid #3a2e1a;}
+.s-today{background:#d4a33c;color:#0d0d0d;}
+.s-future{background:#111008;color:#3a3020;border:1px solid #1a1610;}
+.schedule-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+@media(min-width:620px){.schedule-grid{grid-template-columns:1fr 1fr;}}
+@media(min-width:900px){.schedule-grid{grid-template-columns:1fr 1fr 1fr;}}
+.day-card{background:#111008;border:1px solid #1e1a12;border-radius:14px;overflow:hidden;}
+.day-card.is-today{border-color:#d4a33c!important;}
+.day-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid #1a1610;}
+.day-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#e8d8b0;}
+.day-badge{font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;font-weight:600;}
+.b-en{background:#1a2e1a;color:#6dbf6d;}.b-zh{background:#2e1a1a;color:#e06060;}.b-mix{background:#1a1e2e;color:#6080e0;}.b-rest{background:#1e1e1e;color:#888;}
+.day-body{padding:12px 16px;}
+.task-item{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-bottom:1px solid #161410;}
+.task-item:last-child{border-bottom:none;}
+.task-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.d-gold{background:#d4a33c;}.d-red{background:#e06060;}.d-blue{background:#6080e0;}.d-gray{background:#444;}
+.task-text{font-size:12.5px;color:#9a8e78;line-height:1.5;flex:1;}
+.task-time{font-size:10px;color:#5a5040;white-space:nowrap;flex-shrink:0;padding-left:6px;margin-top:2px;}
+.control-block{margin-bottom:18px;}
+.control-block-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#6a5e4a;margin-bottom:10px;font-weight:500;display:block;}
+.toggle-group{display:flex;flex-direction:column;gap:8px;}
+@media(min-width:500px){.toggle-group{flex-direction:row;flex-wrap:wrap;}}
+.btn-toggle{padding:13px 18px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid #252015;background:#0e0c08;color:#7a6e58;transition:all .2s;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
+@media(min-width:500px){.btn-toggle{width:auto;}}
+.btn-toggle.active{background:#1c1508;border-color:#d4a33c;color:#d4a33c;}
+.btn-generate{width:100%;padding:16px 20px;border-radius:12px;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:none;background:#d4a33c;color:#0d0d0d;font-family:'DM Sans',sans-serif;margin-bottom:14px;-webkit-appearance:none;transition:background .15s;}
+.btn-generate:active{background:#bf932e;}
+.btn-generate:disabled{background:#4a3a18;color:#2a2010;cursor:not-allowed;}
+.status-box{border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;line-height:1.6;display:none;}
+.status-loading{background:#1a1610;border:1px solid #2a2010;color:#8a7e68;display:block;}
+.status-ok{background:#1a2e1a;border:1px solid #2a4020;color:#6dbf6d;display:block;}
+.status-err{background:#2e1a1a;border:1px solid #4a2010;color:#e08060;display:block;}
+.status-box .spin{display:inline-block;animation:spin .8s linear infinite;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.vocab-date{text-align:center;font-size:10px;color:#3a3020;margin-bottom:5px;letter-spacing:2px;text-transform:uppercase;}
+.vocab-meta{text-align:center;font-size:11px;color:#5a5040;margin-bottom:16px;}
+.vocab-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+@media(min-width:500px){.vocab-grid{grid-template-columns:1fr 1fr;}}
+@media(min-width:800px){.vocab-grid{grid-template-columns:1fr 1fr 1fr;}}
+.vocab-card{background:#0e0d0a;border:1px solid #1e1a12;border-radius:14px;padding:16px 15px;opacity:0;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease;}
+.vocab-card.visible{opacity:1;transform:translateY(0);}
+.vocab-word{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#e8d8b0;margin-bottom:3px;}
+.vocab-pinyin{font-size:12px;color:#d4a33c;margin-bottom:9px;font-style:italic;}
+.vocab-tag{display:inline-block;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:11px;font-weight:600;}
+.vt-noun{background:#1a2e1a;color:#6dbf6d;}.vt-verb{background:#2e1a1a;color:#e06060;}
+.vt-adj{background:#1a1e2e;color:#6080e0;}.vt-adv{background:#2e2a1a;color:#d4a33c;}
+.vt-phrase{background:#1e1a2e;color:#a060e0;}.vt-other{background:#1a1a1a;color:#888;}
+.vocab-meaning{font-size:13px;color:#9a8e78;line-height:1.65;margin-bottom:10px;border-left:2px solid #2a2010;padding-left:10px;}
+.vocab-example{font-size:12px;color:#5a5040;font-style:italic;line-height:1.55;}
+.vocab-example b{color:#7a6e58;font-style:normal;}
+.empty-state{text-align:center;padding:56px 20px;color:#5a5040;}
+.empty-icon{font-size:44px;margin-bottom:14px;}
+.empty-title{font-family:'Playfair Display',serif;font-size:18px;color:#7a6e58;margin-bottom:8px;}
+.empty-sub{font-size:13px;line-height:1.7;}
+.empty-sub strong{color:#d4a33c;}
+.phase-block{background:#0e0d0a;border:1px solid #1e1a12;border-radius:14px;padding:16px 18px;margin-bottom:12px;}
+.phase-meta{font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:5px;}
+.phase-title{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:7px;}
+.phase-desc{font-size:13px;color:#7a6e5a;line-height:1.7;}
+.res-category{margin-bottom:26px;}
+.res-cat-header{padding:14px 16px;border-radius:12px 12px 0 0;border:1px solid #1e1a12;border-bottom:none;}
+.res-cat-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;}
+.res-cat-sub{font-size:11px;color:#6a5e4a;margin-top:2px;}
+.res-list{border:1px solid #1e1a12;border-radius:0 0 12px 12px;overflow:hidden;}
+.res-link{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#0e0d0a;border-bottom:1px solid #161410;text-decoration:none;color:inherit;cursor:pointer;}
+.res-link:last-child{border-bottom:none;}
+.res-link:active{background:#141108;}
+.res-link-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center;}
+.res-link-body{flex:1;min-width:0;}
+.res-link-name{font-size:13px;font-weight:500;color:#e0d4b8;margin-bottom:3px;}
+.res-link-desc{font-size:11.5px;color:#6a5e4a;line-height:1.5;}
+.res-link-tag{font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:10px;font-weight:600;margin-top:4px;display:inline-block;}
+.tag-free{background:#1a2e1a;color:#6dbf6d;}.tag-free-trial{background:#1a1e2e;color:#6080e0;}
+.res-arrow{color:#3a3020;font-size:16px;flex-shrink:0;}
+.use-badge{display:inline-block;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:8px;font-weight:600;margin-bottom:6px;}
+.use-reading{background:#1e2a1e;color:#6dbf6d;}.use-writing{background:#2a1e2e;color:#c060e0;}
+.use-listening{background:#1e1e2e;color:#6080e0;}.use-speaking{background:#2e2a1a;color:#d4a33c;}
+.use-vocab{background:#2e1a1a;color:#e06060;}.use-mock{background:#2e2010;color:#e0a030;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hero">
+    <div class="hero-label">Study Command Center</div>
+    <div class="hero-title">Band C &amp; <span>Band 7+</span></div>
+    <div class="hero-sub">TOEFL &nbsp;·&nbsp; IELTS &nbsp;·&nbsp; TOCFL — Taiwan</div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('schedule',this)">📅 Weekly Plan</button>
+    <button class="tab" onclick="switchTab('vocab',this)">📖 Daily Vocab</button>
+    <button class="tab" onclick="switchTab('resources',this)">🔗 Resources</button>
+    <button class="tab" onclick="switchTab('phases',this)">🗺 Roadmap</button>
+  </div>
+  <div class="content">
+
+    <!-- SCHEDULE -->
+    <div id="panel-schedule" class="panel active">
+      <div class="section-label">Your streak this week</div>
+      <div class="streak-bar" id="streakBar"></div>
+      <div class="info-card" id="todayCard"></div>
+      <div class="section-label">7-Day Weekly Schedule</div>
+      <div class="schedule-grid" id="scheduleGrid"></div>
+    </div>
+
+    <!-- VOCAB -->
+    <div id="panel-vocab" class="panel">
+      <div class="info-card">
+        🤖 <strong>AI generates 25 completely new words every single press</strong> — different each time, never repeated. Pick your language and level, then tap the button!
+      </div>
+      <div class="control-block">
+        <span class="control-block-label">Language</span>
+        <div class="toggle-group">
+          <button class="btn-toggle active" id="btn-toefl" onclick="setLang('toefl')">🇺🇸&nbsp; TOEFL / IELTS English</button>
+          <button class="btn-toggle" id="btn-tocfl" onclick="setLang('tocfl')">🇹🇼&nbsp; TOCFL Mandarin</button>
+        </div>
+      </div>
+      <div class="control-block">
+        <span class="control-block-label">Level</span>
+        <div class="toggle-group">
+          <button class="btn-toggle active" id="btn-int" onclick="setLevel('intermediate')">📗&nbsp; Intermediate — Band B / IELTS 5.5–6.5</button>
+          <button class="btn-toggle" id="btn-adv" onclick="setLevel('advanced')">📕&nbsp; Advanced — Band C / IELTS 7–9</button>
+        </div>
+      </div>
+      <div class="control-block">
+        <span class="control-block-label">AI Setup</span>
+        <input id="apiKeyInput" type="password" placeholder="Paste your Gemini API key" style="width:100%;padding:14px 16px;border-radius:10px;border:1px solid #252015;background:#0e0c08;color:#f0ece4;font-family:'DM Sans',sans-serif;font-size:12px;"/>
+        <div style="font-size:11px;color:#6a5e4a;margin-top:8px;line-height:1.5;">Stored only in your browser. This app uses online AI and keeps a local history to reduce repeated words after refresh.</div>
+      </div>
+      <button class="btn-generate" id="btnGen" onclick="generate()">✨ Generate 25 New Words</button>
+      <div class="status-box" id="statusBox"></div>
+      <div id="vocabEmpty" class="empty-state">
+        <div class="empty-icon" id="emptyIcon">📚</div>
+        <div class="empty-title">Ready to learn?</div>
+        <div class="empty-sub">Tap the button above for <strong>25 brand new AI-generated</strong><br/><strong id="levelLabel">Intermediate · TOEFL/IELTS English</strong><br/>words — completely different every time!</div>
+      </div>
+      <div id="vocabOut" style="display:none">
+        <div class="vocab-date" id="vocabDate"></div>
+        <div class="vocab-meta" id="vocabMeta"></div>
+        <div class="vocab-grid" id="vocabGrid"></div>
+      </div>
+    </div>
+
+    <!-- RESOURCES -->
+    <div id="panel-resources" class="panel">
+      <div class="info-card">🔗 All resources are <strong>free or free-trial</strong> unless marked. Tap any to open in your browser.</div>
+      <div id="resPanel"></div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div id="panel-phases" class="panel">
+      <div class="section-label">Your 6-Month Roadmap</div>
+      <div class="info-card">Target: <strong>IELTS Band 7+</strong> &amp; <strong>TOCFL Band C</strong>.<br/>Saturday is always your free day!</div>
+      <div id="phasesOut"></div>
+    </div>
+
+  </div>
+</div>
+<script>
+// ── state
+var lang='toefl', level='intermediate', pressCount=0;
+var GEMINI_MODEL='gemini-3-flash-preview';
+var HISTORY_LIMIT=600;
+
+// ── topics rotate so each press feels fresh
+var TOPICS=[
+  'environment and climate change',
+  'technology and digital innovation',
+  'society and cultural change',
+  'education and lifelong learning',
+  'global economy and trade',
+  'health and modern medicine',
+  'politics and governance',
+  'art literature and creativity',
+  'science and research',
+  'psychology and human behaviour',
+  'urban development and city life',
+  'history and civilisation',
+  'media and communication',
+  'food culture and sustainability',
+  'sports and physical wellbeing',
+  'philosophy and ethics',
+  'law and justice',
+  'space and future technology',
+  'family and social relationships',
+  'language and linguistics'
+];
+
+// ── schedule data
+var DAYS=[
+  {name:'Monday',badge:'English 🇺🇸',bc:'b-en',tasks:[{t:'TOEFL/IELTS Reading — 2 academic passages',m:'45 min',d:'d-gold'},{t:'Vocabulary review — TOEFL flashcards',m:'20 min',d:'d-gold'},{t:'Grammar — complex sentence structures',m:'25 min',d:'d-gold'},{t:'Daily vocab (this app!)',m:'10 min',d:'d-blue'}]},
+  {name:'Tuesday',badge:'Mandarin 🇹🇼',bc:'b-zh',tasks:[{t:'TOCFL Listening — native Taiwanese Mandarin',m:'40 min',d:'d-red'},{t:'Characters — 15 new Band B/C words',m:'20 min',d:'d-red'},{t:'Daily vocab — TOCFL mode',m:'10 min',d:'d-blue'},{t:'Spaced repetition (Anki)',m:'20 min',d:'d-red'}]},
+  {name:'Wednesday',badge:'Mixed 📚',bc:'b-mix',tasks:[{t:'IELTS/TOEFL Writing — 1 full essay',m:'60 min',d:'d-gold'},{t:'TOCFL Reading — academic Chinese texts',m:'30 min',d:'d-red'},{t:'Daily vocab — both TOEFL + TOCFL',m:'15 min',d:'d-blue'}]},
+  {name:'Thursday',badge:'English 🇺🇸',bc:'b-en',tasks:[{t:'TOEFL/IELTS Listening — full section',m:'40 min',d:'d-gold'},{t:'Speaking — record & replay yourself',m:'20 min',d:'d-gold'},{t:'Vocabulary review',m:'20 min',d:'d-gold'},{t:'Daily vocab generation',m:'10 min',d:'d-blue'}]},
+  {name:'Friday',badge:'Mandarin 🇹🇼',bc:'b-zh',tasks:[{t:'TOCFL mock section (Listening + Reading)',m:'60 min',d:'d-red'},{t:'Chinese news — 公視 / UDN',m:'20 min',d:'d-red'},{t:'Daily vocab — TOCFL words',m:'10 min',d:'d-blue'},{t:'Pronunciation & tone drills',m:'20 min',d:'d-red'}]},
+  {name:'Saturday',badge:'Light Day 💼',bc:'b-rest',tasks:[{t:'Part-time job day — you\'ve worked hard!',m:'',d:'d-gray'},{t:'Daily vocab during break or commute',m:'10 min',d:'d-blue'},{t:'Passive listening — podcast or news',m:'Passive',d:'d-gray'},{t:'Optional: 1 reading passage if energy allows',m:'20 min',d:'d-gray'}]},
+  {name:'Sunday',badge:'Rest + Review 🌿',bc:'b-rest',tasks:[{t:'Light English: podcast, show, or article',m:'30 min',d:'d-gray'},{t:'Anki — all saved words review',m:'20 min',d:'d-blue'},{t:'Plan next week\'s study goals',m:'10 min',d:'d-gray'},{t:'Rest — no intense studying today!',m:'',d:'d-gray'}]}
+];
+
+var RESOURCES=[
+  {cat:'📝 Essay Writing Practice',sub:'For TOEFL Independent & IELTS Task 2',col:'#c060e0',items:[
+    {ic:'✍️',name:'IELTS Liz — Essay Topics & Model Answers',desc:'Huge collection of IELTS Writing Task 2 topics with Band 8–9 model essays.',url:'https://ieltsliz.com/ielts-writing-task-2/',cost:'free',use:'writing'},
+    {ic:'📄',name:'TOEFL Writing Topics — ETS Official',desc:'Official ETS pool of real TOEFL Independent Writing topics to practice from.',url:'https://www.ets.org/toefl/test-takers/ibt/prepare/tests/writing.html',cost:'free',use:'writing'},
+    {ic:'🖊️',name:'IELTS Advantage — Writing Task 2',desc:'Step-by-step essay structures and sample answers for IELTS Band 7+.',url:'https://www.ieltsadvantage.com/writing-task-2/',cost:'free',use:'writing'},
+    {ic:'🤖',name:'Essay Feedback with Claude AI',desc:'Paste your essay into Claude and ask for grammar, coherence, and band score feedback.',url:'https://claude.ai',cost:'free',use:'writing'}
+  ]},
+  {cat:'🎧 Listening Practice',sub:'For TOEFL & IELTS Listening sections',col:'#6080e0',items:[
+    {ic:'🎧',name:'IELTS Listening — British Council',desc:'Official IELTS listening tests with audio and answer keys.',url:'https://www.britishcouncil.org/exam/ielts/ielts-practice-tests',cost:'free',use:'listening'},
+    {ic:'🎙️',name:'TOEFL Listening Practice — ETS',desc:'Official TOEFL listening sample questions and full-length practice sets.',url:'https://www.ets.org/toefl/test-takers/ibt/prepare/tests/listening.html',cost:'free',use:'listening'},
+    {ic:'📻',name:'BBC 6 Minute English',desc:'Short 6-minute audio episodes on academic topics with full transcripts.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english',cost:'free',use:'listening'},
+    {ic:'🎬',name:'TED Talks',desc:'Watch academic talks with subtitles, then again without. Great for TOEFL-level listening.',url:'https://www.ted.com/talks',cost:'free',use:'listening'}
+  ]},
+  {cat:'📖 Reading Practice',sub:'For TOEFL & IELTS Reading sections',col:'#6dbf6d',items:[
+    {ic:'📰',name:'IELTS Reading Practice — IELTS.org',desc:'Official IELTS Academic and General Training reading tests with answers.',url:'https://www.ielts.org/about-ielts/sample-test-questions',cost:'free',use:'reading'},
+    {ic:'📑',name:'TOEFL Reading Practice — ETS',desc:'Official TOEFL reading passages and multiple-choice questions.',url:'https://www.ets.org/toefl/test-takers/ibt/prepare/tests/reading.html',cost:'free',use:'reading'},
+    {ic:'🌐',name:'The Economist — Free Articles',desc:'Academic-style writing on global issues — the exact register used in IELTS/TOEFL.',url:'https://www.economist.com',cost:'free',use:'reading'},
+    {ic:'🔬',name:'Scientific American',desc:'Science articles at the vocabulary level used in TOEFL reading passages.',url:'https://www.scientificamerican.com',cost:'free',use:'reading'}
+  ]},
+  {cat:'🗣️ Speaking Practice',sub:'For IELTS Speaking & TOEFL Speaking',col:'#d4a33c',items:[
+    {ic:'📱',name:'ELSA Speak — AI Pronunciation Coach',desc:'AI gives real-time feedback on pronunciation, fluency, and accuracy. 10 min daily.',url:'https://elsaspeak.com',cost:'free-trial',use:'speaking'},
+    {ic:'🎤',name:'IELTS Speaking Topics — IELTS Liz',desc:'Real Part 1, 2 and 3 speaking topics with sample answers. Record yourself then compare.',url:'https://ieltsliz.com/ielts-speaking/',cost:'free',use:'speaking'},
+    {ic:'🤝',name:'iTalki — Language Exchange Partner',desc:'Connect with native English or Mandarin speakers for free conversation exchange.',url:'https://www.italki.com',cost:'free',use:'speaking'},
+    {ic:'🪞',name:'TOEFL Speaking Templates',desc:'Exact templates for TOEFL Integrated and Independent Speaking tasks.',url:'https://www.toeflresources.com/speaking-section/toefl-speaking-templates/',cost:'free',use:'speaking'}
+  ]},
+  {cat:'📋 Full Mock Tests',sub:'Timed, full-length practice exams',col:'#e0a030',items:[
+    {ic:'🏆',name:'IELTS Full Practice Test — IELTS.org',desc:'Official full-length IELTS Academic practice test with all 4 sections.',url:'https://www.ielts.org/about-ielts/sample-test-questions',cost:'free',use:'mock'},
+    {ic:'🏆',name:'TOEFL Free Practice Test — ETS',desc:'Free official full TOEFL iBT practice test — scored and timed like the real exam.',url:'https://www.ets.org/toefl/test-takers/ibt/prepare/tests.html',cost:'free',use:'mock'},
+    {ic:'💻',name:'IELTS Online Tests',desc:'Large bank of IELTS mock tests for Listening and Reading with auto-scoring.',url:'https://www.ieltsonlinetests.com',cost:'free',use:'mock'},
+    {ic:'📊',name:'Road to IELTS — British Council',desc:'Official British Council platform with full mock tests and band score feedback.',url:'https://www.britishcouncil.org/exam/ielts/preparation/road-to-ielts',cost:'free-trial',use:'mock'}
+  ]},
+  {cat:'🈶 TOCFL Mandarin Practice',sub:'Listening, Reading & Mock Tests in Chinese',col:'#e06060',items:[
+    {ic:'📝',name:'TOCFL Official Mock Tests',desc:'Official practice tests for Band B and Band C with answer keys. Use every Friday!',url:'https://tocfl.edu.tw/tocfl/index.php/exam/test',cost:'free',use:'mock'},
+    {ic:'📚',name:'TOCFL Official Vocabulary Lists',desc:'Download the official Band B and Band C word lists as PDF.',url:'https://tocfl.edu.tw/tocfl/index.php/exam/download',cost:'free',use:'vocab'},
+    {ic:'📺',name:'公視新聞 — PTS Taiwan News',desc:'Native-speed Taiwanese Mandarin news. Watch 15 minutes daily on study days.',url:'https://news.pts.org.tw',cost:'free',use:'listening'},
+    {ic:'📰',name:'UDN 聯合新聞網',desc:'Taiwan\'s major newspaper. Read one article daily for Band B/C reading practice.',url:'https://udn.com/news/index',cost:'free',use:'reading'},
+    {ic:'🔊',name:'Mandarin Corner — Advanced Chinese',desc:'YouTube: native-speed Mandarin conversations subtitled in Chinese and English.',url:'https://www.youtube.com/@MandarinCorner',cost:'free',use:'listening'},
+    {ic:'✍️',name:'TOCFL Writing Section Guide',desc:'Official TOCFL guidance on writing section format and criteria for Band C.',url:'https://tocfl.edu.tw/tocfl/index.php/test/writing',cost:'free',use:'writing'}
+  ]},
+  {cat:'🃏 Vocabulary & Flashcards',sub:'Build and review your word bank daily',col:'#a060e0',items:[
+    {ic:'🃏',name:'Anki — Spaced Repetition Flashcards',desc:'Best free flashcard app. Add every new word from this app into Anki and review daily.',url:'https://apps.ankiweb.net',cost:'free',use:'vocab'},
+    {ic:'📗',name:'Magoosh TOEFL Vocabulary',desc:'1000 most important TOEFL vocabulary words with definitions and usage examples.',url:'https://magoosh.com/toefl/toefl-vocabulary/',cost:'free',use:'vocab'},
+    {ic:'🈯',name:'Pleco — Chinese Dictionary App',desc:'Best Chinese dictionary for iOS. Look up any TOCFL word with stroke order and audio.',url:'https://www.pleco.com',cost:'free',use:'vocab'},
+    {ic:'🌐',name:'Quizlet — TOCFL Word Sets',desc:'Search "TOCFL Band B" or "TOCFL Band C" for community flashcard sets.',url:'https://quizlet.com/search?query=TOCFL&type=sets',cost:'free',use:'vocab'}
+  ]}
+];
+
+var PHASES=[
+  {p:'Phase 1',title:'Diagnose & Baseline',weeks:'Weeks 1–2',col:'#6dbf6d',desc:'Take a free diagnostic test for both TOEFL/IELTS and TOCFL. Don\'t study hard yet — just find your benchmark. Identify your 2 weakest sections per exam. Register on ets.org, britishcouncil.org.tw, and tocfl.edu.tw.'},
+  {p:'Phase 2',title:'Foundation Building',weeks:'Weeks 3–8',col:'#6080e0',desc:'Study 1.5–2 hours daily Mon–Fri. Use this app\'s vocab tab at Intermediate level every morning. Read English academic texts and Traditional Chinese news daily. Start Anki spaced repetition for all new words.'},
+  {p:'Phase 3',title:'Skill Drilling',weeks:'Weeks 9–16',col:'#d4a33c',desc:'Switch vocab to Advanced level. Write 2 essays per week, do full listening sections, record speaking. For TOCFL: 公視 news daily, mock reading passages, drill 20 new characters per day.'},
+  {p:'Phase 4',title:'Mock Test Mastery',weeks:'Weeks 17–22',col:'#e06060',desc:'One full timed mock test per week (best on Sunday). Review every single mistake. Book your official exam — TOCFL needs 6–8 weeks ahead, IELTS/TOEFL needs 4+ weeks.'},
+  {p:'Phase 5',title:'Final Polish',weeks:'Weeks 23–24',col:'#a060e0',desc:'No new content. Light review of weak areas only. Confirm test booking and prepare all ID documents. Prioritize sleep. Trust your preparation — you\'ve got this! 🎯'}
+];
+
+// ── helpers
+function tn(){return new Date().toLocaleDateString('en-US',{weekday:'long'});}
+function ts(){return new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});}
+function tc(t){t=(t||'').toLowerCase();if(t==='noun')return'vt-noun';if(t==='verb')return'vt-verb';if(t.startsWith('adj'))return'vt-adj';if(t.startsWith('adv'))return'vt-adv';if(t==='phrase'||t==='idiom')return'vt-phrase';return'vt-other';}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function setLang(v){lang=v;localStorage.setItem('vocab_lang',v);document.getElementById('btn-toefl').classList.toggle('active',v==='toefl');document.getElementById('btn-tocfl').classList.toggle('active',v==='tocfl');updateLabel();}
+function setLevel(v){level=v;localStorage.setItem('vocab_level',v);document.getElementById('btn-int').classList.toggle('active',v==='intermediate');document.getElementById('btn-adv').classList.toggle('active',v==='advanced');updateLabel();}
+function updateLabel(){
+  var lbl=document.getElementById('levelLabel');
+  var icon=document.getElementById('emptyIcon');
+  lbl.textContent=(level==='intermediate'?'Intermediate':'Advanced')+' · '+(lang==='toefl'?'TOEFL/IELTS English':'TOCFL Mandarin');
+  icon.textContent=lang==='tocfl'?'字':'📚';
+}
+
+function setStatus(type,msg){
+  var box=document.getElementById('statusBox');
+  box.className='status-box status-'+type;
+  box.innerHTML=msg;
+}
+
+
+function escapeHtml(v){return String(v==null?'':v).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});}
+function modeKey(){return lang+'__'+level;}
+function historyStore(){try{return JSON.parse(localStorage.getItem('vocab_history_v2')||'{}');}catch(e){return {};}}
+function getSeenWords(){var store=historyStore();return Array.isArray(store[modeKey()])?store[modeKey()]:[];}
+function saveSeenWords(words){var store=historyStore();var current=getSeenWords();var merged=current.concat(words).filter(Boolean);var uniq=[];var seen={};merged.forEach(function(w){var k=String(w).trim().toLowerCase();if(k&&!seen[k]){seen[k]=true;uniq.push(String(w).trim());}});store[modeKey()]=uniq.slice(-HISTORY_LIMIT);localStorage.setItem('vocab_history_v2',JSON.stringify(store));}
+function pickRandomTopic(){var used;try{used=JSON.parse(localStorage.getItem('used_topics_v2')||'[]');}catch(e){used=[];}if(!Array.isArray(used))used=[];var available=TOPICS.filter(function(t){return used.indexOf(t)===-1;});if(!available.length){used=[];available=TOPICS.slice();}var topic=available[Math.floor(Math.random()*available.length)];used.push(topic);localStorage.setItem('used_topics_v2',JSON.stringify(used.slice(-TOPICS.length)));return topic;}
+function normalizeWords(items){if(!Array.isArray(items)) return [];var seenBatch={};return items.map(function(w){if(!w||!w.word) return null;return {word:String(w.word).trim(),pinyin:w.pinyin==null?'':String(w.pinyin).trim(),type:String(w.type||'other').trim().toLowerCase(),meaning:String(w.meaning||'').trim(),example:String(w.example||'').trim()};}).filter(function(w){if(!w||!w.word||!w.meaning) return false;var k=w.word.toLowerCase();if(seenBatch[k]) return false;seenBatch[k]=true;return true;});}
+function filterAgainstHistory(items){var seen={};getSeenWords().forEach(function(w){seen[String(w).trim().toLowerCase()]=true;});return items.filter(function(w){return !seen[w.word.toLowerCase()];});}
+async function callGemini(prompt){var apiKey=(localStorage.getItem('gemini_api_key')||'').trim();if(!apiKey) throw new Error('Please paste your Gemini API key first.');var url='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(GEMINI_MODEL)+':generateContent';var res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':apiKey},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:1.3,topP:0.95,responseMimeType:'application/json'}})});if(!res.ok){var t=await res.text();throw new Error('AI request failed: '+res.status+' '+t.slice(0,180));}var data=await res.json();var raw=((data.candidates||[])[0]||{}).content;raw=(raw&&raw.parts||[]).map(function(p){return p.text||'';}).join('').trim();if(!raw) throw new Error('AI returned an empty response.');return normalizeWords(JSON.parse(raw));}
+
+// ── MAIN GENERATE — calls Gemini API directly
+async function generate(){
+  var btn=document.getElementById('btnGen');
+  btn.disabled=true;
+  pressCount++;
+  var topic=pickRandomTopic();
+  var lvlLabel=level==='intermediate'?'Band B / Intermediate':'Band C / Advanced';
+  var langLabel=lang==='toefl'?'TOEFL / IELTS English':'TOCFL Mandarin';
+
+  document.getElementById('vocabEmpty').style.display='none';
+  document.getElementById('vocabOut').style.display='none';
+  setStatus('loading','<span class="spin">⏳</span> Generating 25 fresh '+lvlLabel+' '+langLabel+' words…');
+  btn.textContent='Generating…';
+
+  try{
+    var isTOCFL=lang==='tocfl';
+    var isAdv=level==='advanced';
+    var recentSeen=getSeenWords().slice(-120).join(', ');
+    var prompt=isTOCFL
+      ? 'Return ONLY a JSON array with exactly 25 objects. Generate 25 unique Traditional Chinese vocabulary items for '+(isAdv?'TOCFL Band C':'TOCFL Band B')+'. Theme: '+topic+'. Avoid any duplicates inside the batch and avoid these previously shown words: '+recentSeen+'. Use Taiwan usage. Each object must be {"word":"...","pinyin":"tone-marked pinyin","type":"noun|verb|adjective|adverb|phrase","meaning":"English meaning in one sentence","example":"Natural Traditional Chinese sentence with English translation in parentheses"}. No markdown. No extra text.'
+      : 'Return ONLY a JSON array with exactly 25 objects. Generate 25 unique '+(isAdv?'advanced':'intermediate')+' English vocabulary items for IELTS/TOEFL. Theme: '+topic+'. Avoid any duplicates inside the batch and avoid these previously shown words: '+recentSeen+'. Each object must be {"word":"...","pinyin":null,"type":"noun|verb|adjective|adverb|phrase","meaning":"clear one-sentence definition","example":"one natural sentence using the word"}. No markdown. No extra text.';
+
+    var combined=[];
+    for(var attempt=0;attempt<3 && combined.length<25;attempt++){
+      var fresh=filterAgainstHistory(await callGemini(prompt+' Attempt '+(attempt+1)+'.'));
+      combined=normalizeWords(combined.concat(fresh));
+    }
+
+    if(combined.length<25){
+      throw new Error('The AI could not return 25 fresh non-repeated words. Try again or change the level.');
+    }
+
+    combined=combined.slice(0,25);
+    saveSeenWords(combined.map(function(w){return w.word;}));
+    renderWords(combined,'ai',topic);
+  }catch(err){
+    setStatus('err','❌ '+escapeHtml(err.message||String(err)));
+    document.getElementById('btnGen').textContent='✨ Generate 25 New Words';
+    document.getElementById('btnGen').disabled=false;
+    document.getElementById('vocabEmpty').style.display='block';
+  }
+}
+
+function generateOffline(topic){
+  // Pure client-side word generation — no API needed, always unique per press
+  var isTOCFL=lang==='tocfl';
+  var isAdv=level==='advanced';
+
+  var EN_INT=[
+    {word:'Acknowledge',type:'verb',meaning:'To accept or admit the existence or truth of something',example:'She acknowledged the importance of regular practice in language learning.'},
+    {word:'Allocate',type:'verb',meaning:'To distribute resources or duties for a specific purpose',example:'The school allocated extra time for students preparing for exams.'},
+    {word:'Ambivalent',type:'adjective',meaning:'Having mixed feelings or contradictory ideas about something',example:'She felt ambivalent about studying abroad — excited but also nervous.'},
+    {word:'Anticipate',type:'verb',meaning:'To expect or predict something before it happens',example:'Researchers anticipated a significant rise in global temperatures.'},
+    {word:'Attribute',type:'verb',meaning:'To regard something as being caused by a particular factor',example:'His success was attributed to consistent daily practice.'},
+    {word:'Broaden',type:'verb',meaning:'To make or become wider or more extensive in scope',example:'Travelling abroad broadens your cultural understanding significantly.'},
+    {word:'Capacity',type:'noun',meaning:'The maximum amount that something can contain or produce',example:'The stadium reached full capacity on the opening night.'},
+    {word:'Circulate',type:'verb',meaning:'To move or cause to move continuously through a system',example:'Information circulates rapidly through social media platforms.'},
+    {word:'Clarify',type:'verb',meaning:'To make a statement or situation less confused and more comprehensible',example:'The teacher clarified the exam format before the test began.'},
+    {word:'Comply',type:'verb',meaning:'To act in accordance with a wish, request, or rule',example:'All students must comply with the school\'s code of conduct.'},
+    {word:'Comprehensive',type:'adjective',meaning:'Including or dealing with all or nearly all aspects of something',example:'The textbook provides a comprehensive overview of modern economics.'},
+    {word:'Concede',type:'verb',meaning:'To admit that something is true after first denying it',example:'The researcher finally conceded that the data was inconclusive.'},
+    {word:'Conditional',type:'adjective',meaning:'Subject to one or more conditions or requirements being met',example:'Her acceptance into the programme was conditional on passing the entrance exam.'},
+    {word:'Confirm',type:'verb',meaning:'To establish the truth or correctness of something previously believed',example:'The experiment confirmed the original hypothesis about climate patterns.'},
+    {word:'Conflicting',type:'adjective',meaning:'Incompatible or at variance; contradicting each other',example:'The two studies produced conflicting results about dietary habits.'},
+    {word:'Constitute',type:'verb',meaning:'To be or be equivalent to something; to make up or form',example:'Hard work and dedication constitute the foundation of academic success.'},
+    {word:'Controversy',type:'noun',meaning:'Prolonged public disagreement or debate, especially about a sensitive topic',example:'The new curriculum sparked considerable controversy among educators.'},
+    {word:'Convey',type:'verb',meaning:'To communicate a message or meaning successfully',example:'The author uses metaphors to convey complex emotions in the novel.'},
+    {word:'Correlate',type:'verb',meaning:'To have a mutual relationship or connection with another thing',example:'Higher education levels correlate strongly with increased earning potential.'},
+    {word:'Criteria',type:'noun',meaning:'Principles or standards by which something may be judged or decided',example:'The selection criteria for the scholarship are clearly outlined online.'},
+    {word:'Deduce',type:'verb',meaning:'To reach a conclusion by reasoning from evidence or general principles',example:'From the data, scientists deduced that pollution levels were rising.'},
+    {word:'Demonstrate',type:'verb',meaning:'To clearly show the existence or truth of something by evidence',example:'The experiment demonstrates the relationship between diet and health.'},
+    {word:'Deplete',type:'verb',meaning:'To use up the supply or resources of something substantially',example:'Overuse of groundwater is rapidly depleting natural aquifer reserves.'},
+    {word:'Derive',type:'verb',meaning:'To obtain something from a specified source',example:'Many English words are derived directly from Latin or Greek roots.'},
+    {word:'Devise',type:'verb',meaning:'To plan or invent a complex procedure or mechanism by careful thought',example:'Scientists devised a new method for measuring carbon dioxide levels.'},
+    {word:'Differentiate',type:'verb',meaning:'To recognize or identify what makes something different',example:'It is important to differentiate between correlation and causation.'},
+    {word:'Diminish',type:'verb',meaning:'To make or become less; to reduce gradually in quality or quantity',example:'Constant interruptions can diminish a student\'s ability to focus.'},
+    {word:'Disregard',type:'verb',meaning:'To pay no attention to; to treat as unworthy of consideration',example:'The committee decided to disregard the incomplete data from the study.'},
+    {word:'Distribute',type:'verb',meaning:'To give shares of something out among a number of recipients',example:'The aid organization distributed food and medicine to affected areas.'},
+    {word:'Dominant',type:'adjective',meaning:'Most important, powerful, or influential in a particular area',example:'English has become the dominant language in international business.'},
+  ];
+
+  var EN_ADV=[
+    {word:'Aberrant',type:'adjective',meaning:'Departing from an accepted standard; unusual or atypical in a significant way',example:'The scientist noted aberrant results that contradicted the established model.'},
+    {word:'Abstruse',type:'adjective',meaning:'Difficult to understand; obscure and complex in nature',example:'The philosopher\'s abstruse arguments were challenging even for academics.'},
+    {word:'Acumen',type:'noun',meaning:'The ability to make good judgements and quick decisions in a particular domain',example:'Her business acumen helped the startup grow rapidly within two years.'},
+    {word:'Admonish',type:'verb',meaning:'To warn or reprimand someone firmly but not harshly',example:'The professor admonished students who failed to cite their sources properly.'},
+    {word:'Aesthetic',type:'adjective',meaning:'Concerned with beauty and the appreciation of beauty in art or nature',example:'The architect\'s aesthetic choices were bold and visually striking.'},
+    {word:'Ambiguity',type:'noun',meaning:'The quality of being open to more than one interpretation; inexactness',example:'The ambiguity in the contract led to a prolonged legal dispute.'},
+    {word:'Ameliorate',type:'verb',meaning:'To make something bad or unsatisfactory better; to improve',example:'Community programmes aim to ameliorate the effects of urban poverty.'},
+    {word:'Anachronistic',type:'adjective',meaning:'Belonging to a period other than that being portrayed; outdated',example:'Using printed encyclopedias feels anachronistic in the digital age.'},
+    {word:'Anecdotal',type:'adjective',meaning:'Based on personal accounts rather than facts or research',example:'The evidence presented was largely anecdotal and lacked scientific rigour.'},
+    {word:'Antagonize',type:'verb',meaning:'To cause someone to become hostile or unfriendly toward you',example:'His dismissive tone only served to antagonize the other committee members.'},
+    {word:'Arbitrary',type:'adjective',meaning:'Based on random choice or personal whim rather than any reason or system',example:'The grading system was criticized for being arbitrary and inconsistent.'},
+    {word:'Archaic',type:'adjective',meaning:'Very old or old-fashioned; no longer in common use',example:'The archaic legal language made the document difficult to interpret.'},
+    {word:'Articulate',type:'adjective',meaning:'Having or showing the ability to speak fluently and coherently',example:'The articulate student impressed the judges with her well-structured argument.'},
+    {word:'Ascertain',type:'verb',meaning:'To find out for certain; to make sure of through investigation',example:'Investigators worked to ascertain the true cause of the equipment failure.'},
+    {word:'Assiduous',type:'adjective',meaning:'Showing great care and perseverance over a long period of time',example:'Her assiduous preparation for the TOEFL exam resulted in a perfect score.'},
+    {word:'Atrophy',type:'verb',meaning:'To gradually decline in effectiveness or vigour due to underuse',example:'Without consistent practice, language skills will inevitably atrophy over time.'},
+    {word:'Audacious',type:'adjective',meaning:'Showing a willingness to take surprisingly bold risks',example:'The audacious proposal to restructure the entire curriculum surprised everyone.'},
+    {word:'Austere',type:'adjective',meaning:'Severe or strict in manner; having no comforts or luxuries',example:'The philosopher led an austere life, owning very few material possessions.'},
+    {word:'Belittle',type:'verb',meaning:'To make someone or something seem unimportant or of little value',example:'A good teacher never belittles a student\'s effort, no matter how small.'},
+    {word:'Benevolent',type:'adjective',meaning:'Well-meaning and kindly; generous in spirit and action',example:'The benevolent donor funded scholarships for underprivileged students.'},
+    {word:'Candid',type:'adjective',meaning:'Truthful and straightforward; frank in a way that may seem blunt',example:'She gave a candid assessment of the research team\'s weaknesses.'},
+    {word:'Circumspect',type:'adjective',meaning:'Wary and unwilling to take risks; carefully considering all circumstances',example:'The circumspect investor avoided high-risk assets during uncertain times.'},
+    {word:'Cogent',type:'adjective',meaning:'Clear, logical, and convincing in argument or expression',example:'The lawyer presented a cogent case that won over the entire jury.'},
+    {word:'Complacent',type:'adjective',meaning:'Showing uncritical satisfaction with oneself or one\'s achievements',example:'Students who become complacent often fail to reach their full potential.'},
+    {word:'Convoluted',type:'adjective',meaning:'Extremely complex and difficult to follow; intricately twisted',example:'The convoluted explanation confused rather than clarified the main point.'},
+    {word:'Corroborate',type:'verb',meaning:'To confirm or give support to a statement or theory',example:'The witness\'s testimony corroborated the evidence found at the scene.'},
+    {word:'Credulous',type:'adjective',meaning:'Too willing to believe things; easily deceived or duped',example:'A credulous reader may accept sensational headlines without checking the facts.'},
+    {word:'Cursory',type:'adjective',meaning:'Hasty and therefore not thorough or detailed',example:'A cursory review of the essay revealed several grammatical errors.'},
+    {word:'Cynical',type:'adjective',meaning:'Believing that people are motivated purely by self-interest; distrustful',example:'Years of broken promises made her deeply cynical about political reform.'},
+    {word:'Deference',type:'noun',meaning:'Humble submission and respect shown toward a person\'s wishes or authority',example:'Out of deference to tradition, the ceremony followed the original format.'},
+  ];
+
+  var ZH_INT=[
+    {word:'依據',pinyin:'yī jù',type:'noun',meaning:'A basis or foundation for action; grounds or evidence for a decision',example:'請提供您申請的依據和相關文件。(Please provide the basis for your application and relevant documents.)'},
+    {word:'整合',pinyin:'zhěng hé',type:'verb',meaning:'To combine or merge things into a unified whole; to integrate',example:'這個平台整合了來自多個部門的資料。(This platform integrates data from multiple departments.)'},
+    {word:'概念',pinyin:'gài niàn',type:'noun',meaning:'An abstract idea or general notion formed in the mind',example:'永續發展是現代環保政策的核心概念。(Sustainable development is the core concept of modern environmental policy.)'},
+    {word:'實施',pinyin:'shí shī',type:'verb',meaning:'To put a plan, law, or policy into effect; to implement',example:'新的交通法規已於本月正式實施。(The new traffic regulations were officially implemented this month.)'},
+    {word:'保障',pinyin:'bǎo zhàng',type:'verb',meaning:'To guarantee or ensure the safety or protection of something',example:'政府有責任保障每位公民的基本權利。(The government has a responsibility to safeguard the basic rights of every citizen.)'},
+    {word:'取得',pinyin:'qǔ dé',type:'verb',meaning:'To obtain or achieve something through effort',example:'她努力學習，終於取得了優異的成績。(She studied hard and finally achieved excellent results.)'},
+    {word:'推廣',pinyin:'tuī guǎng',type:'verb',meaning:'To spread or promote something widely to more people or areas',example:'政府積極推廣節能減碳的生活方式。(The government actively promotes an energy-saving lifestyle.)'},
+    {word:'逐漸',pinyin:'zhú jiàn',type:'adverb',meaning:'Slowly and steadily; gradually over a period of time',example:'她的中文程度逐漸提高，現在已能流利溝通。(Her Chinese gradually improved and she can now communicate fluently.)'},
+    {word:'回應',pinyin:'huí yìng',type:'verb',meaning:'To respond or reply to something; to react to a situation',example:'政府迅速回應了民眾的訴求。(The government quickly responded to the public\'s demands.)'},
+    {word:'特色',pinyin:'tè sè',type:'noun',meaning:'A distinctive feature or characteristic that makes something special',example:'台灣夜市是這座城市最具特色的文化之一。(Taiwan\'s night markets are one of the most distinctive cultural features of the city.)'},
+    {word:'成效',pinyin:'chéng xiào',type:'noun',meaning:'The results or effectiveness of an action or policy',example:'這項政策實施後成效顯著，犯罪率明顯下降。(After this policy was implemented, the results were significant.)'},
+    {word:'架構',pinyin:'jià gòu',type:'noun',meaning:'A basic structure or framework underlying a system or concept',example:'這篇論文的架構清晰，論點有條有理。(The structure of this thesis is clear and the arguments are well-organized.)'},
+    {word:'影響力',pinyin:'yǐng xiǎng lì',type:'noun',meaning:'The capacity to have an effect on others; influence or power',example:'社群媒體上的網紅擁有巨大的社會影響力。(Influencers on social media have enormous social influence.)'},
+    {word:'優先',pinyin:'yōu xiān',type:'verb',meaning:'To treat something as more important than others; to prioritize',example:'在緊急情況下，應優先確保人員安全。(In an emergency, ensuring personnel safety should be the top priority.)'},
+    {word:'範圍',pinyin:'fàn wéi',type:'noun',meaning:'The area or scope covered by something; the extent of a subject',example:'這項研究的範圍涵蓋了全台灣的中學生。(The scope of this study covers middle school students across all of Taiwan.)'},
+    {word:'擔憂',pinyin:'dān yōu',type:'verb',meaning:'To feel worried or anxious about something; to be concerned',example:'許多家長擔憂孩子花太多時間在手機上。(Many parents are worried about their children spending too much time on their phones.)'},
+    {word:'重視',pinyin:'zhòng shì',type:'verb',meaning:'To attach great importance to something; to value or regard highly',example:'這間公司非常重視員工的身心健康。(This company places great importance on employees\' physical and mental health.)'},
+    {word:'反映',pinyin:'fǎn yìng',type:'verb',meaning:'To reflect or express something; to mirror a situation or feeling',example:'這份調查結果反映了民眾對政策的不滿。(These survey results reflect public dissatisfaction with the policy.)'},
+    {word:'論點',pinyin:'lùn diǎn',type:'noun',meaning:'A reason or set of reasons given in support of an idea; an argument',example:'她的論文中有幾個論點非常具有說服力。(Several arguments in her thesis are very convincing.)'},
+    {word:'靈活',pinyin:'líng huó',type:'adjective',meaning:'Able to change easily to suit different conditions; flexible',example:'靈活的工作時間讓員工的生活更加平衡。(Flexible working hours make employees\' lives more balanced.)'},
+    {word:'提升',pinyin:'tí shēng',type:'verb',meaning:'To raise or improve the level, standard, or quality of something',example:'多閱讀可以有效提升語文能力。(Reading more can effectively improve language ability.)'},
+    {word:'挑戰',pinyin:'tiǎo zhàn',type:'noun',meaning:'A task or situation that tests someone\'s abilities; a difficult problem',example:'學習一門新語言是一項既困難又有意義的挑戰。(Learning a new language is a challenging but meaningful endeavor.)'},
+    {word:'顯著',pinyin:'xiǎn zhù',type:'adjective',meaning:'Very noticeable or obvious; clearly visible or significant',example:'這項研究取得了顯著的成果。(This research has achieved significant results.)'},
+    {word:'突破',pinyin:'tū pò',type:'verb',meaning:'To break through a barrier or limitation; to make a breakthrough',example:'科學家在癌症治療方面取得了重大突破。(Scientists have made a major breakthrough in cancer treatment.)'},
+    {word:'持續',pinyin:'chí xù',type:'verb',meaning:'To continue without interruption; to maintain over a period of time',example:'持續學習是適應快速變化社會的關鍵。(Continuous learning is key to adapting to a rapidly changing society.)'},
+    {word:'廣泛',pinyin:'guǎng fàn',type:'adjective',meaning:'Covering a large area or range; extensive and widespread',example:'這個議題在社會上引起了廣泛的討論。(This issue has sparked widespread discussion in society.)'},
+    {word:'依賴',pinyin:'yī lài',type:'verb',meaning:'To rely on or need something for support or to function',example:'現代人越來越依賴智慧型手機處理日常事務。(Modern people increasingly rely on smartphones to handle daily matters.)'},
+    {word:'缺乏',pinyin:'quē fá',type:'verb',meaning:'To be without something needed or required; to lack',example:'長期缺乏睡眠會對健康造成嚴重影響。(Long-term lack of sleep can have a serious impact on health.)'},
+    {word:'促進',pinyin:'cù jìn',type:'verb',meaning:'To promote or encourage the growth or development of something',example:'政府積極促進兩國之間的文化交流。(The government actively promotes cultural exchange between the two countries.)'},
+    {word:'合理',pinyin:'hé lǐ',type:'adjective',meaning:'Based on good reasoning or sound judgment; fair and sensible',example:'這個要求是合理的，大多數人都能接受。(This request is reasonable and most people can accept it.)'},
+  ];
+
+  var ZH_ADV=[
+    {word:'斟酌',pinyin:'zhēn zhuó',type:'verb',meaning:'To consider carefully before deciding; to weigh up options with deliberation',example:'這份合約的條款需要仔細斟酌後再簽署。(The terms of this contract need to be carefully considered before signing.)'},
+    {word:'顛覆',pinyin:'diān fù',type:'verb',meaning:'To overturn or overthrow an established system, belief, or structure',example:'這項技術顛覆了傳統製造業的生產模式。(This technology has overturned the traditional production model of the manufacturing industry.)'},
+    {word:'涵蓋',pinyin:'hán gài',type:'verb',meaning:'To include or cover a wide range of subjects, areas, or items',example:'這份報告涵蓋了過去十年的所有相關數據。(This report covers all relevant data from the past ten years.)'},
+    {word:'剖析',pinyin:'pōu xī',type:'verb',meaning:'To analyse in depth and detail; to dissect a topic to reveal its inner workings',example:'這篇文章深入剖析了當代社會的貧富差距問題。(This article deeply analyses the issue of wealth inequality in contemporary society.)'},
+    {word:'演繹',pinyin:'yǎn yì',type:'verb',meaning:'To deduce or derive conclusions by logical reasoning from general principles',example:'他從歷史事實中演繹出這個深刻的社會理論。(He derived this profound social theory through logical reasoning from historical facts.)'},
+    {word:'汲取',pinyin:'jí qǔ',type:'verb',meaning:'To draw upon or absorb knowledge, experience, or lessons from a source',example:'我們應從歷史中汲取教訓，避免重蹈覆轍。(We should draw lessons from history to avoid repeating past mistakes.)'},
+    {word:'闡明',pinyin:'chǎn míng',type:'verb',meaning:'To state or explain something clearly and in detail; to elucidate',example:'教授在演講中闡明了這個複雜理論的核心原理。(The professor clearly explained the core principles of this complex theory in the lecture.)'},
+    {word:'滲透',pinyin:'shèn tòu',type:'verb',meaning:'To penetrate gradually into something; to spread through or permeate',example:'西方文化已逐漸滲透到全球各地的日常生活中。(Western culture has gradually permeated daily life around the world.)'},
+    {word:'契合',pinyin:'qì hé',type:'verb',meaning:'To fit together perfectly; to be in harmony or agreement with something',example:'這項政策與現行的社會發展目標高度契合。(This policy is highly aligned with current social development goals.)'},
+    {word:'釐清',pinyin:'lí qīng',type:'verb',meaning:'To clarify or sort out confusion; to make something clear and unambiguous',example:'在討論前，我們需要先釐清幾個關鍵概念。(Before the discussion, we need to first clarify several key concepts.)'},
+    {word:'凸顯',pinyin:'tū xiǎn',type:'verb',meaning:'To make something stand out prominently; to highlight or emphasize clearly',example:'這場危機凸顯了公共衛生體系的嚴重不足。(This crisis highlighted the serious deficiencies in the public health system.)'},
+    {word:'縱觀',pinyin:'zòng guān',type:'verb',meaning:'To take a comprehensive overview; to survey broadly across time or scope',example:'縱觀人類歷史，科技進步始終是推動社會發展的主要動力。(Surveying human history broadly, technological progress has always been the main driver of social development.)'},
+    {word:'銘記',pinyin:'míng jì',type:'verb',meaning:'To keep firmly in mind; to engrave something deeply in one\'s memory',example:'我們應銘記歷史的教訓，珍惜得來不易的和平。(We should firmly keep the lessons of history in mind and cherish the hard-won peace.)'},
+    {word:'彰顯',pinyin:'zhāng xiǎn',type:'verb',meaning:'To make evident or manifest; to display or demonstrate something prominently',example:'這次展覽彰顯了台灣在文化藝術方面的豐富成就。(This exhibition prominently displayed Taiwan\'s rich achievements in culture and the arts.)'},
+    {word:'擘畫',pinyin:'bò huà',type:'verb',meaning:'To plan or map out a grand vision or strategy; to lay out ambitious blueprints',example:'政府正積極擘畫未來十年的國家發展藍圖。(The government is actively mapping out the national development blueprint for the next ten years.)'},
+    {word:'奠基',pinyin:'diàn jī',type:'verb',meaning:'To lay the foundation for something; to establish the groundwork',example:'這項研究為後來的學術發展奠基了重要基礎。(This research laid an important foundation for subsequent academic development.)'},
+    {word:'顛沛流離',pinyin:'diān pèi liú lí',type:'phrase',meaning:'To lead a wandering life full of hardship and displacement; to be homeless and in distress',example:'戰爭使無數家庭顛沛流離，失去了安身之所。(The war caused countless families to wander in hardship, losing their homes.)'},
+    {word:'鞭長莫及',pinyin:'biān cháng mò jí',type:'phrase',meaning:'Beyond one\'s reach or power to control; unable to intervene due to distance',example:'對於遠在海外的違規行為，當地法律有時鞭長莫及。(For violations committed far overseas, local laws are sometimes beyond reach.)'},
+    {word:'審時度勢',pinyin:'shěn shí duó shì',type:'phrase',meaning:'To assess the situation carefully and act accordingly; to read circumstances wisely',example:'一位出色的領導者必須能審時度勢，做出最佳決策。(An outstanding leader must be able to assess the situation and make the best decisions.)'},
+    {word:'高瞻遠矚',pinyin:'gāo zhān yuǎn zhǔ',type:'phrase',meaning:'To have great foresight and vision; to look far ahead with wisdom and clarity',example:'這位企業家高瞻遠矚，早在十年前就預見了這個市場趨勢。(This entrepreneur had great foresight and predicted this market trend ten years ago.)'},
+    {word:'鍥而不捨',pinyin:'qiè ér bù shě',type:'phrase',meaning:'To persevere without giving up; to chisel away persistently until success is achieved',example:'她鍥而不捨地練習，終於在比賽中取得了冠軍。(She persevered without giving up and finally won the championship in the competition.)'},
+    {word:'觸目驚心',pinyin:'chù mù jīng xīn',type:'phrase',meaning:'Shocking and disturbing to behold; so striking that it alarms the viewer',example:'戰場上觸目驚心的景象令每一位目擊者都感到震撼。(The shocking scenes on the battlefield alarmed every witness who saw them.)'},
+    {word:'義無反顧',pinyin:'yì wú fǎn gù',type:'phrase',meaning:'To act with complete resolve and without hesitation when duty demands it',example:'面對危險，消防員義無反顧地衝入火場救人。(Facing danger, the firefighter acted with complete resolve and rushed into the fire to save people.)'},
+    {word:'博採眾長',pinyin:'bó cǎi zhòng cháng',type:'phrase',meaning:'To draw on the strengths of many; to absorb the best from diverse sources',example:'優秀的作家善於博採眾長，將不同風格融為一體。(Excellent writers are skilled at drawing on the strengths of many, blending different styles into one.)'},
+    {word:'殫精竭慮',pinyin:'dān jīng jié lǜ',type:'phrase',meaning:'To exhaust all one\'s mental energy and thought; to think deeply with total devotion',example:'他殫精竭慮地投入這項研究，最終取得了突破性的成果。(He devoted all his mental energy to this research and ultimately achieved a breakthrough.)'},
+    {word:'言之鑿鑿',pinyin:'yán zhī záo záo',type:'phrase',meaning:'To speak with great certainty and conviction; said with firm and confident assertions',example:'他言之鑿鑿地表示自己有確鑿的證據支持這個論點。(He spoke with great conviction, stating that he had solid evidence to support this argument.)'},
+    {word:'不可或缺',pinyin:'bù kě huò quē',type:'phrase',meaning:'Absolutely essential and indispensable; cannot be done without',example:'批判性思維是現代教育中不可或缺的核心能力。(Critical thinking is an indispensable core competency in modern education.)'},
+    {word:'不偏不倚',pinyin:'bù piān bù yǐ',type:'phrase',meaning:'Perfectly impartial and unbiased; neither favouring one side nor the other',example:'優秀的記者應不偏不倚地報導新聞，呈現客觀事實。(Excellent journalists should report news impartially, presenting objective facts.)'},
+    {word:'觸類旁通',pinyin:'chù lèi páng tōng',type:'phrase',meaning:'To gain mastery in one area and apply it to others; to learn by analogy',example:'學好一門程式語言後，觸類旁通，學習其他語言會更容易。(After mastering one programming language, you can apply that knowledge to learn others more easily.)'},
+    {word:'脈絡清晰',pinyin:'mài luò qīng xī',type:'phrase',meaning:'Having a clear and coherent logical thread; well-structured and easy to follow',example:'這篇論文論述脈絡清晰，讀者能夠輕鬆跟上作者的思路。(This paper has a clear logical thread, and readers can easily follow the author\'s reasoning.)'},
+  ];
+
+  var bank=isTOCFL?(isAdv?ZH_ADV:ZH_INT):(isAdv?EN_ADV:EN_INT);
+  // shuffle using pressCount as seed variation
+  var arr=bank.slice();
+  var seed=pressCount*7+13;
+  for(var i=arr.length-1;i>0;i--){seed=(seed*1664525+1013904223)&0xffffffff;var j=Math.abs(seed)%(i+1);var tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;}
+  renderWords(arr.slice(0,25),'offline',topic);
+}
+
+function renderWords(words,source,topic){
+  var lvlLabel=level==='intermediate'?'Intermediate':'Advanced';
+  var langLabel=lang==='toefl'?'TOEFL/IELTS English':'TOCFL Mandarin';
+  var grid=document.getElementById('vocabGrid');
+  grid.innerHTML='';
+  words.forEach(function(w,i){
+    var card=document.createElement('div');
+    card.className='vocab-card';
+    card.innerHTML='<div class="vocab-word">'+w.word+'</div>'
+      +(w.pinyin?'<div class="vocab-pinyin">'+w.pinyin+'</div>':'')
+      +'<span class="vocab-tag '+tc(w.type)+'">'+w.type+'</span>'
+      +'<div class="vocab-meaning">'+w.meaning+'</div>'
+      +(w.example?'<div class="vocab-example"><b>e.g.</b> '+w.example+'</div>':'');
+    grid.appendChild(card);
+    setTimeout(function(){card.classList.add('visible');},i*30);
+  });
+  document.getElementById('vocabDate').textContent=ts()+' — '+lvlLabel+' · '+langLabel;
+  document.getElementById('vocabMeta').textContent=(source==='ai'?'✦ AI batch #'+pressCount+' · Theme: '+topic:'✦ Offline batch #'+pressCount+' · shuffled from built-in bank')+' · '+words.length+' words';
+  document.getElementById('vocabOut').style.display='block';
+  if(source==='ai'){setStatus('ok','🟢 AI generated '+words.length+' fresh words and saved them in local history to reduce repeats after refresh.');}
+  else{setStatus('ok','📚 Showing '+words.length+' words from built-in bank.');}
+  document.getElementById('btnGen').textContent='🔄 Generate 25 New Words';
+  document.getElementById('btnGen').disabled=false;
+}
+
+// ── build schedule
+function buildSchedule(){
+  var bar=document.getElementById('streakBar');
+  ['M','T','W','T','F','S','S'].forEach(function(l,i){
+    var idx=(new Date().getDay()+6)%7;
+    var d=document.createElement('div');
+    d.className='streak-day '+(i<idx?'s-done':i===idx?'s-today':'s-future');
+    d.textContent=l;bar.appendChild(d);
+  });
+  var today=DAYS.filter(function(d){return d.name===tn();})[0];
+  document.getElementById('todayCard').innerHTML='📌 <strong>'+ts()+'</strong><br>Today\'s focus: <strong>'+(today?today.badge:'Study Day')+'</strong><br>Saturday = light day. No pressure! 💼';
+  var grid=document.getElementById('scheduleGrid');
+  DAYS.forEach(function(day){
+    var card=document.createElement('div');
+    card.className='day-card'+(day.name===tn()?' is-today':'');
+    card.innerHTML='<div class="day-header"><div class="day-name">'+day.name+'</div><span class="day-badge '+day.bc+'">'+day.badge+'</span></div>'
+      +'<div class="day-body">'+day.tasks.map(function(t){return '<div class="task-item"><div class="task-dot '+t.d+'"></div><div class="task-text">'+t.t+'</div>'+(t.m?'<div class="task-time">'+t.m+'</div>':'')+'</div>';}).join('')+'</div>';
+    grid.appendChild(card);
+  });
+}
+
+// ── build resources
+function buildResources(){
+  var uL={reading:'Reading',writing:'Writing',listening:'Listening',speaking:'Speaking',vocab:'Vocabulary',mock:'Mock Test'};
+  var uC={reading:'use-reading',writing:'use-writing',listening:'use-listening',speaking:'use-speaking',vocab:'use-vocab',mock:'use-mock'};
+  var panel=document.getElementById('resPanel');
+  RESOURCES.forEach(function(cat){
+    var sec=document.createElement('div');sec.className='res-category';
+    sec.innerHTML='<div class="res-cat-header" style="background:'+cat.col+'18;border-color:'+cat.col+'40;">'
+      +'<div class="res-cat-title" style="color:'+cat.col+'">'+cat.cat+'</div>'
+      +'<div class="res-cat-sub">'+cat.sub+'</div></div>'
+      +'<div class="res-list">'+cat.items.map(function(item){
+        return '<a class="res-link" href="'+item.url+'" target="_blank" rel="noopener">'
+          +'<div class="res-link-icon">'+item.ic+'</div>'
+          +'<div class="res-link-body"><div class="use-badge '+uC[item.use]+'">'+uL[item.use]+'</div>'
+          +'<div class="res-link-name">'+item.name+'</div>'
+          +'<div class="res-link-desc">'+item.desc+'</div>'
+          +'<span class="res-link-tag tag-'+item.cost+'">'+item.cost+'</span></div>'
+          +'<div class="res-arrow">›</div></a>';
+      }).join('')+'</div>';
+    panel.appendChild(sec);
+  });
+}
+
+// ── build phases
+function buildPhases(){
+  var c=document.getElementById('phasesOut');
+  PHASES.forEach(function(p){
+    var el=document.createElement('div');el.className='phase-block';el.style.borderLeft='3px solid '+p.col;
+    el.innerHTML='<div class="phase-meta" style="color:'+p.col+'">'+p.p+' · '+p.weeks+'</div>'
+      +'<div class="phase-title" style="color:'+p.col+'">'+p.title+'</div>'
+      +'<div class="phase-desc">'+p.desc+'</div>';
+    c.appendChild(el);
+  });
+}
+
+buildSchedule();buildResources();buildPhases();
+(function initSettings(){
+  var savedLang=localStorage.getItem('vocab_lang');
+  var savedLevel=localStorage.getItem('vocab_level');
+  var savedKey=localStorage.getItem('gemini_api_key')||'';
+  if(savedLang==='toefl'||savedLang==='tocfl'){lang=savedLang;}
+  if(savedLevel==='intermediate'||savedLevel==='advanced'){level=savedLevel;}
+  document.getElementById('btn-toefl').classList.toggle('active',lang==='toefl');
+  document.getElementById('btn-tocfl').classList.toggle('active',lang==='tocfl');
+  document.getElementById('btn-int').classList.toggle('active',level==='intermediate');
+  document.getElementById('btn-adv').classList.toggle('active',level==='advanced');
+  var keyInput=document.getElementById('apiKeyInput');
+  if(keyInput){keyInput.value=savedKey;keyInput.addEventListener('input',function(){localStorage.setItem('gemini_api_key',this.value.trim());});}
+  updateLabel();
+})();
+</script>
+</body>
+</html>
